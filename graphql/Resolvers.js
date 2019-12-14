@@ -1,24 +1,29 @@
-const Batch = require('../models/batch.model');
+const { queryBatches, createBatch } = require("../models/batch.model");
+const { createUser } = require("../models/user.model");
 
 module.exports = {
     batches: async () => {
-        const batch = new Batch();
         try {
-            const data = await batch.queryAll()
+            const data = await queryBatches();
             return data;
-        }
-        catch (err) {
+        } catch (err) {
             throw err;
         }
     },
-    createBatch: async (args) => {
-        const batch = new Batch();
+    createBatch: async args => {
         try {
-            const mutation = await batch.createBatch(args);
+            const mutation = await createBatch(args);
             return mutation;
+        } catch (err) {
+            throw err;
         }
-        catch (err) {
+    },
+    createUser: async args => {
+        try {
+            const mutation = await createUser(args);
+            return mutation;
+        } catch (err) {
             throw err;
         }
     }
-}
+};
