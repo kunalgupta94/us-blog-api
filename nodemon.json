@@ -1,0 +1,8 @@
+{
+    "env": {
+        "DB_URL": "mongodb://localhost",
+        "DB_PORT": "27017",
+        "DB_NAME": "blog",
+        "PORT": 3000
+    }
+}
