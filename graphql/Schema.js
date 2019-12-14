@@ -33,7 +33,8 @@ input ArticleInput {
 type User {
     _id: ID!
     email: String!
-    password: String
+    password: String,
+    salt: String
     batches: [Batch!]!
     articles: [Article!]!
 }
@@ -46,6 +47,7 @@ input UserInput {
 type RootQuery {
     batches: [Batch!]!
     articles: [Article!]!
+    loginQuery(input: UserInput): Boolean!
 }
 
 type RootMutation {

@@ -1,5 +1,5 @@
 const { queryBatches, createBatch } = require("../models/batch.model");
-const { createUser } = require("../models/user.model");
+const { createUser, loginQuery } = require("../models/user.model");
 
 module.exports = {
     batches: async () => {
@@ -25,5 +25,13 @@ module.exports = {
         } catch (err) {
             throw err;
         }
-    }
+    },
+    loginQuery: async args => {
+        try {
+            const query = await loginQuery(args);
+            return query;
+        } catch (err) {
+            throw err;
+        }
+    },
 };
