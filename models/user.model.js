@@ -1,20 +1,38 @@
 const mongo = require("../server");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const _ = require("../helper");
 const { user } = require("../constants").collections;
-const db = mongo.db();
-const userCollection = db.collection(user);
+const userCollection = mongo.db().collection(user);
 
 const loginQuery = args => {
     return new Promise((resolve, reject) =>
         userCollection.findOne({ email: args.input.email }, (err, result) => {
             if (result) {
-                resolve(
-                    _.validatePassword(
+                const hash = crypto
+                    .pbkdf2Sync(
                         args.input.password,
                         result.salt,
-                        result.password
+                        1000,
+                        64,
+                        "sha512"
                     )
-                );
+                    .toString("hex");
+                try {
+                    if (hash === result.password) {
+                        const token = jwt.sign(
+                            { email: result.email, _id: result._id },
+                            process.env.SECRET_KEY
+                        );
+                        const user = { _id: result._id, email: result.email };
+                        resolve({
+                            token,
+                            user
+                        });
+                    }
+                } catch (err) {
+                    reject(err);
+                }
             }
             reject(err);
         })
@@ -22,9 +40,13 @@ const loginQuery = args => {
 };
 
 const createUser = async args => {
-    const user = await userCollection.findOne({ email: args.input.email });
-    if (user) {
-        throw new Error("User already eists");
+    try {
+        const user = await userCollection.findOne({ email: args.input.email });
+        if (user) {
+            throw new Error("User already eists");
+        }
+    } catch (err) {
+        throw err;
     }
     const passwordData = _.setPassword(args.input.password);
     return new Promise((resolve, reject) =>
@@ -40,7 +62,12 @@ const createUser = async args => {
                 }
                 if (result.result.ok === 1) {
                     const { salt, password, ...data } = result.ops[0];
-                    resolve({ ...data });
+                    const { email, _id } = result.ops[0];
+                    const token = jwt.sign(
+                        { email, _id },
+                        process.env.SECRET_KEY
+                    );
+                    resolve({ token, user: { ...data } });
                 }
             }
         )

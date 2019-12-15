@@ -11,16 +11,10 @@ const setPassword = password => {
     };
 };
 
-const validatePassword = (password, salt, userHash) => {
-    const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-    return hash === userHash;
-}
-
 module.exports = {
     prepareId: o => {
         o._id = o._id.toString();
         return o;
     },
-    setPassword,
-    validatePassword
+    setPassword
 };

@@ -3,6 +3,7 @@
         "DB_URL": "mongodb://localhost",
         "DB_PORT": "27017",
         "DB_NAME": "blog",
-        "PORT": 3000
+        "PORT": 3000,
+        "SECRET_KEY": "C867C6D4FDCC524BBF29B2C01EB61CB7D0053340FD09C761EF22044A4DBB8FD5"
     }
 }
