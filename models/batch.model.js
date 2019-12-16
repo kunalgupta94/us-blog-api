@@ -1,10 +1,9 @@
 const mongo = require("../server");
+const { ObjectId } = require("mongodb");
 const _ = require("../helper");
-const { batch } = require("../constants").collections;
-
-const db = mongo.db();
-const batchCollection = db.collection(batch);
-
+const { batch, user } = require("../constants").collections;
+const batchCollection = mongo.db().collection(batch);
+const userCollection = mongo.db().collection(user);
 const queryBatches = () =>
     new Promise((resolve, reject) =>
         batchCollection.find().toArray((err, res) => {
@@ -15,17 +14,21 @@ const queryBatches = () =>
                 res.map(batch => {
                     return {
                         ...batch,
-                        _id: batch._id.toString(),
-                        createdBy: "Kunal"
+                        _id: batch._id.toString()
                     };
                 })
             );
         })
     );
 
-const createBatch = args => {
+const createBatch = async (args, userId) => {
     const date = new Date().toISOString();
-    const user = "Kunal";
+    let user;
+    try {
+        user = await userCollection.findOne({ _id: new ObjectId(userId) });
+    } catch (err) {
+        throw err;
+    }
     return new Promise((resolve, reject) =>
         batchCollection.insertOne(
             {
@@ -38,7 +41,6 @@ const createBatch = args => {
                 if (err) {
                     reject(err);
                 }
-                console.log(data);
                 if (data.result.ok === 1) {
                     resolve(data.ops[0]);
                 }

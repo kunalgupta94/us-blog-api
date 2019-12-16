@@ -10,10 +10,13 @@ module.exports = {
             throw err;
         }
     },
-    createBatch: async args => {
+    createBatch: async (args, req) => {
         try {
-            const mutation = await createBatch(args);
-            return mutation;
+            if (req.isAuth) {
+                const mutation = await createBatch(args, req.userId);
+                return mutation;
+            }
+            throw new Error('Authentication Error')
         } catch (err) {
             throw err;
         }

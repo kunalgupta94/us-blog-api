@@ -11,7 +11,7 @@ type Batch {
     name: String!
     description: String!
     createdAt: String!
-    createdBy: String!
+    createdBy: User!
     articles: [Article]
 }
 
@@ -25,7 +25,7 @@ type Article {
     title: String!
     body: String!
     createdAt: String!
-    createdBt: User!
+    createdBy: User!
     batch: Batch
 }
 

@@ -1,7 +1,7 @@
 const { express, bodyParser, graphQlHttp } = require("./imports");
 const mongo = require("./server");
 const { messages } = require("./constants");
-
+const authentication = require('./middleware');
 mongo.connect(err => {
     console.clear();
     if (err) {
@@ -14,6 +14,7 @@ mongo.connect(err => {
     const Schema = require("./graphql/Schema");
     const app = express();
     app.use(bodyParser.json());
+    app.use(authentication);
     app.use(
         "/",
         graphQlHttp({
