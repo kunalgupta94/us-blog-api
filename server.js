@@ -2,6 +2,12 @@ const dbUrl = `${process.env.DB_URL}:${process.env.DB_PORT}/${process.env.DB_NAM
 const { MongoClient, ObjectId } = require("mongodb");
 const assert = require("assert");
 
+const errors = {
+    invalidArgs: schemaName =>
+        new Error(`Invalid args provided in schema ${schemaName}`),
+    invalidType: (type, key) => new Error(`Expected type ${type} for ${key}`)
+};
+
 let _db;
 
 class Model {
@@ -13,24 +19,19 @@ class Model {
 
     create(args) {
         const argKeys = Object.keys(args);
-        assert.deepStrictEqual(
-            argKeys,
-            Object.keys(this.schema),
-            new Error(
-                `Invalid args provided in schema ${this.name.toLowerCase()}`
-            )
-        );
+        const schemaKeys = Object.keys(this.schema);
+        const { invalidArgs, invalidType } = errors;
+        const schemaName = this.name.toLowerCase();
         const model = {};
+
+        assert.deepStrictEqual(argKeys, schemaKeys, invalidArgs(schemaName));
         for (let i = 0; i < argKeys.length; i++) {
             try {
                 const key = argKeys[i];
                 const arg = args[key];
-                const schema = this.schema[key];
-                if (typeof arg === schema) {
-                    model[key] = arg;
-                } else {
-                    throw new Error(`Expected type ${schema} for ${key}`);
-                }
+                const type = this.schema[key];
+                assert.strictEqual(typeof arg, type, invalidType(type, key));
+                model[key] = arg;
             } catch (err) {
                 throw err;
             }
@@ -39,14 +40,11 @@ class Model {
     }
 
     findById(id) {
-        assert(
-            typeof id,
-            "string",
-            new Error(`Invalid type of Id in schema ${this.name.toLowerCase()}`)
-        );
-        this.collection
+        const { invalidType } = errors;
+        assert.strictEqual(typeof id, "string", invalidType("string", "id"));
+        return this.collection
             .findOne({ _id: new ObjectId(id) })
-            .then(res => res.ops[0]);
+            .then(res => res);
     }
 
     find(args) {

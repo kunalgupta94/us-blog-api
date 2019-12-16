@@ -14,6 +14,7 @@ const batchSchema = {
 const getBatch = async id => {
     try {
         const data = model.findById(id);
+        console.log(data)
         return data;
     } catch (err) {
         throw err;
@@ -56,7 +57,7 @@ const createBatch = async (args, userId) => {
             name: args.input.name,
             description: args.input.description,
             createdAt: date,
-            sdf: userId
+            createdBy: userId
         });
         return data;
     } catch (err) {
