@@ -1,10 +1,11 @@
 const mongo = require("../server");
+const { ObjectId } = require("mongodb");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const _ = require("../helper");
 const { user } = require("../constants").collections;
 const userCollection = mongo.db().collection(user);
-
+const { getBatchByUser } = require("./batch.model");
 const loginQuery = args => {
     return new Promise((resolve, reject) =>
         userCollection.findOne({ email: args.input.email }, (err, result) => {
@@ -36,6 +37,21 @@ const loginQuery = args => {
             }
             reject(err);
         })
+    );
+};
+
+const getUser = id => {
+    return new Promise((resolve, reject) =>
+        userCollection
+            .findOne({ _id: new ObjectId(id) })
+            .then(res => {
+                getBatchByUser(id).then(batches => {
+                    resolve({ email: res.email, batches, _id: res._id });
+                });
+            })
+            .catch(err => {
+                throw err;
+            })
     );
 };
 
@@ -77,5 +93,6 @@ const createUser = async args => {
 module.exports = {
     userCollection,
     createUser,
-    loginQuery
+    loginQuery,
+    getUser
 };

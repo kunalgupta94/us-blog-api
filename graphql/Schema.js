@@ -11,7 +11,7 @@ type Batch {
     name: String!
     description: String!
     createdAt: String!
-    createdBy: User!
+    createdBy: String!
     articles: [Article]
 }
 
@@ -48,6 +48,7 @@ input UserInput {
 }
 
 type RootQuery {
+    batch(_id: String, userId: String): [Batch!]!
     batches: [Batch!]!
     articles: [Article!]!
     loginQuery(input: UserInput): AuthPayload!

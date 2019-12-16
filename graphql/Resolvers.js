@@ -1,7 +1,29 @@
-const { queryBatches, createBatch } = require("../models/batch.model");
+const {
+    queryBatches,
+    createBatch,
+    getBatch,
+    getBatchByUser
+} = require("../models/batch.model");
 const { createUser, loginQuery } = require("../models/user.model");
 
 module.exports = {
+    batch: async args => {
+        try {
+            let data;
+            if (args._id && args.userId) {
+                throw new Error("Please enter either userId or Batch Id");
+            }
+            if (args._id) {
+                data = await getBatch(args._id);
+                data = [data]
+            } else if (args.userId) {
+                data = await getBatchByUser(args.userId);
+            }
+            return data;
+        } catch (err) {
+            throw err;
+        }
+    },
     batches: async () => {
         try {
             const data = await queryBatches();
@@ -16,7 +38,7 @@ module.exports = {
                 const mutation = await createBatch(args, req.userId);
                 return mutation;
             }
-            throw new Error('Authentication Error')
+            throw new Error("Authentication Error");
         } catch (err) {
             throw err;
         }
@@ -36,5 +58,5 @@ module.exports = {
         } catch (err) {
             throw err;
         }
-    },
+    }
 };
