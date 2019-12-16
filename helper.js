@@ -1,5 +1,13 @@
 const crypto = require("crypto");
 
+const schema = {
+    String: 'string',
+    Boolean: 'boolean',
+    Object: 'object',
+    Array: []
+}
+
+
 const setPassword = password => {
     const salt = crypto.randomBytes(16).toString("hex");
     const hash = crypto
@@ -16,5 +24,5 @@ module.exports = {
         o._id = o._id.toString();
         return o;
     },
-    setPassword
+    schema,
 };

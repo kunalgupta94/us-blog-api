@@ -3,7 +3,6 @@ const { buildSchema } = require("graphql");
 module.exports = buildSchema(`
 type AuthPayload {
     token: String
-    user: User
 }
 
 type Batch {
@@ -25,8 +24,8 @@ type Article {
     title: String!
     body: String!
     createdAt: String!
-    createdBy: User!
-    batch: Batch
+    createdBy: String!
+    batch: String
 }
 
 input ArticleInput {
@@ -48,7 +47,7 @@ input UserInput {
 }
 
 type RootQuery {
-    batch(_id: String, userId: String): [Batch!]!
+    batch(_id: String): Batch
     batches: [Batch!]!
     articles: [Article!]!
     loginQuery(input: UserInput): AuthPayload!

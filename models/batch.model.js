@@ -1,21 +1,24 @@
-const mongo = require("../server");
+const { Model } = require("../server");
 const { ObjectId } = require("mongodb");
 const _ = require("../helper");
-const { batch, user } = require("../constants").collections;
-const batchCollection = mongo.db().collection(batch);
-const userCollection = mongo.db().collection(user);
+const { batch } = require("../constants").collections;
+const { schema } = require("../imports").schema;
 
-const getBatch = id =>
-    new Promise((resolve, reject) =>
-        batchCollection
-            .findOne({ _id: new ObjectId(id) })
-            .then(result => {
-                resolve(result);
-            })
-            .catch(err => {
-                reject(err);
-            })
-    );
+const batchSchema = {
+    name: schema.String,
+    description: schema.String,
+    createdAt: schema.String,
+    createdBy: schema.String
+};
+
+const getBatch = async id => {
+    try {
+        const data = model.findById(id);
+        return data;
+    } catch (err) {
+        throw err;
+    }
+};
 
 const getBatchByUser = userId =>
     new Promise((resolve, reject) =>
@@ -47,29 +50,23 @@ const queryBatches = () =>
     );
 
 const createBatch = async (args, userId) => {
-    const date = new Date().toISOString();
-    return new Promise((resolve, reject) =>
-        batchCollection.insertOne(
-            {
-                name: args.input.name,
-                description: args.input.description,
-                createdAt: date,
-                createdBy: new ObjectId(userId)
-            },
-            (err, data) => {
-                if (err) {
-                    reject(err);
-                }
-                if (data.result.ok === 1) {
-                    resolve(data.ops[0]);
-                }
-            }
-        )
-    );
+    try {
+        const date = new Date().toISOString();
+        const data = await model.create({
+            name: args.input.name,
+            description: args.input.description,
+            createdAt: date,
+            sdf: userId
+        });
+        return data;
+    } catch (err) {
+        throw err;
+    }
 };
 
+const model = new Model("Batch", batchSchema, batch);
+
 module.exports = {
-    batchCollection,
     queryBatches,
     createBatch,
     getBatch,

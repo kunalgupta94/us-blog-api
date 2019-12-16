@@ -5,20 +5,12 @@ const {
     getBatchByUser
 } = require("../models/batch.model");
 const { createUser, loginQuery } = require("../models/user.model");
+const { createArticle } = require("../models/article.model");
 
 module.exports = {
     batch: async args => {
         try {
-            let data;
-            if (args._id && args.userId) {
-                throw new Error("Please enter either userId or Batch Id");
-            }
-            if (args._id) {
-                data = await getBatch(args._id);
-                data = [data]
-            } else if (args.userId) {
-                data = await getBatchByUser(args.userId);
-            }
+            const data = await getBatch(args._id);
             return data;
         } catch (err) {
             throw err;
@@ -47,6 +39,21 @@ module.exports = {
         try {
             const mutation = await createUser(args);
             return mutation;
+        } catch (err) {
+            throw err;
+        }
+    },
+    createArticle: async (args, req) => {
+        try {
+            if (req.isAuth) {
+                const mutation = await createArticle(
+                    args,
+                    req.userId,
+                    args.input.batch
+                );
+                return mutation;
+            }
+            throw new Error("Authentication Error");
         } catch (err) {
             throw err;
         }

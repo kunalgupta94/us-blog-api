@@ -1,7 +1,8 @@
 module.exports = {
     collections: {
         batch: "batch",
-        user: "user"
+        user: "user",
+        article: "article",
     },
     messages: {
         server: `App is listening on port: ${process.env.PORT}`,
