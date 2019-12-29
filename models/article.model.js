@@ -26,8 +26,38 @@ const createArticle = async (args, userid, batch) => {
     }
 };
 
+const queryArticles = () =>
+    new Promise((resolve, reject) =>
+        model.find().toArray((err, res) => {
+            if (err) {
+                reject(err);
+            }
+            if (res.length === 0) return [];
+            resolve(
+                res.map(article => {
+                    return {
+                        ...article,
+                        _id: article._id.toString()
+                    };
+                })
+            );
+        })
+    );
+
+const queryArticleById =  async id => {
+    try {
+        const data = model.findById(id);
+        console.log(data)
+        return data;
+    } catch (err) {
+        throw err;
+    }
+};
+
 const model = new Model("Article", articleSchema, article);
 
 module.exports = {
-    createArticle
+    createArticle,
+    queryArticles,
+    queryArticleById
 };

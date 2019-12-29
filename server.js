@@ -47,10 +47,10 @@ class Model {
             .then(res => res);
     }
 
-    find(args) {
-        const argKeys = Object.keys(args);
-        const schemaKeys = Object.keys(this.schema);
-        console.log(argKeys.forEach(key => schemaKeys.includes(key)));
+    find() {
+        // const argKeys = Object.keys(args);
+        // const schemaKeys = Object.keys(this.schema);
+        return this.collection.find()
     }
 }
 

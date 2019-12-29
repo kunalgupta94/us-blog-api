@@ -35,7 +35,7 @@ const getBatchByUser = userId =>
 
 const queryBatches = () =>
     new Promise((resolve, reject) =>
-        batchCollection.find().toArray((err, res) => {
+        model.find().toArray((err, res) => {
             if (err) {
                 reject(err);
             }

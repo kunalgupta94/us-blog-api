@@ -5,7 +5,7 @@ const {
     getBatchByUser
 } = require("../models/batch.model");
 const { createUser, loginQuery } = require("../models/user.model");
-const { createArticle } = require("../models/article.model");
+const { createArticle, queryArticles, queryArticleById } = require("../models/article.model");
 
 module.exports = {
     batch: async args => {
@@ -19,6 +19,23 @@ module.exports = {
     batches: async () => {
         try {
             const data = await queryBatches();
+            return data;
+        } catch (err) {
+            throw err;
+        }
+    },
+    article: async (args) => {
+        try {
+            const data = await queryArticleById(args._id);
+            return data;
+        } catch (err) {
+            throw err;
+        }
+    },
+    articles: async () => {
+        try {
+            const data = await queryArticles();
+            console.log(data)
             return data;
         } catch (err) {
             throw err;

@@ -1,7 +1,8 @@
 const { express, bodyParser, graphQlHttp } = require("./imports");
+const cors = require("cors");
 const mongo = require("./server");
 const { messages } = require("./constants");
-const authentication = require('./middleware');
+const authentication = require("./middleware");
 mongo.connect(err => {
     console.clear();
     if (err) {
@@ -13,6 +14,7 @@ mongo.connect(err => {
     const Resolvers = require("./graphql/Resolvers");
     const Schema = require("./graphql/Schema");
     const app = express();
+    app.use(cors());
     app.use(bodyParser.json());
     app.use(authentication);
     app.use(

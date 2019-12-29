@@ -49,7 +49,8 @@ input UserInput {
 type RootQuery {
     batch(_id: String): Batch
     batches: [Batch!]!
-    articles: [Article!]!
+    article(_id: String): Article!
+    articles: [Article]
     loginQuery(input: UserInput): AuthPayload!
 }
 

@@ -25,4 +25,5 @@ module.exports = {
         return o;
     },
     schema,
+    setPassword
 };
