@@ -1,6 +1,7 @@
 const { Model } = require("../server");
 const { article } = require("../constants").collections;
 const { schema } = require("../imports").schema;
+const assert = require("assert");
 
 const articleSchema = {
     title: schema.String,
@@ -13,6 +14,8 @@ const articleSchema = {
 const createArticle = async (args, userid, batch) => {
     try {
         const date = new Date().toISOString();
+        assert.notDeepEqual(args.input.title, "", new Error("Empty string provided"))
+        assert.notDeepEqual(args.input.body, "", new Error("Empty string provided"))
         const data = await model.create({
             title: args.input.title,
             body: args.input.body,
